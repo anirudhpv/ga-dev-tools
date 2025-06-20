@@ -7,6 +7,7 @@ import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import Tabs from "@mui/material/Tabs"
 import Tab from "@mui/material/Tab"
+import TextField from "@mui/material/TextField"
 
 import { RequestStatus } from "@/types"
 import PrettyJson from "@/components/PrettyJson"
@@ -73,6 +74,7 @@ const Response: React.FC<ReportsTableProps> = ({
 }) => {
 
   const [tab, setTab] = useState(0)
+  const [pageSize, setPageSize] = useState(25)
 
   const loading = useMemo(
     () =>
@@ -119,7 +121,7 @@ const Response: React.FC<ReportsTableProps> = ({
         {errorDetail}
         {loading}
         {pending}
-        {response !== undefined && <ResponseTable response={response} />}
+        {response !== undefined && <ResponseTable response={response} pageSize={pageSize} setPageSize={setPageSize} />}
       </TabPanel>
       <TabPanel value={tab} index={1}>
         {errorDetail}
@@ -231,8 +233,14 @@ const Aggregations: React.FC<{ response: RunReportResponse }> = ({
   );
 }
 
-const ResponseTable: React.FC<{ response: RunReportResponse }> = ({
+const ResponseTable: React.FC<{ 
+  response: RunReportResponse; 
+  pageSize: number; 
+  setPageSize: (size: number) => void; 
+}> = ({
   response,
+  pageSize,
+  setPageSize,
 }) => {
   const columns = useMemo<GridColDef[]>(
     () =>
@@ -264,8 +272,30 @@ const ResponseTable: React.FC<{ response: RunReportResponse }> = ({
 
   return (
     <>
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Typography variant="body2">Rows per page:</Typography>
+        <TextField
+          size="small"
+          type="number"
+          value={pageSize}
+          onChange={(e) => {
+            const value = parseInt(e.target.value, 10);
+            if (value > 0 && value <= 1000) {
+              setPageSize(value);
+            }
+          }}
+          inputProps={{ min: 1, max: 1000 }}
+          sx={{ width: 100 }}
+        />
+      </Box>
       <div style={{ height: 600, width: "100%" }}>
-        <DataGrid rows={rows} columns={columns} autoPageSize />
+        <DataGrid 
+          rows={rows} 
+          columns={columns} 
+          pageSize={pageSize}
+          rowsPerPageOptions={[10, 25, 50, 100]}
+          pagination
+        />
       </div>
       <Aggregations response={response} />
     </>
