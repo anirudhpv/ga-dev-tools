@@ -7,9 +7,6 @@ import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import Tabs from "@mui/material/Tabs"
 import Tab from "@mui/material/Tab"
-import TextField from "@mui/material/TextField"
-import Button from "@mui/material/Button"
-import DownloadIcon from "@mui/icons-material/Download"
 
 import { RequestStatus } from "@/types"
 import PrettyJson from "@/components/PrettyJson"
@@ -76,7 +73,6 @@ const Response: React.FC<ReportsTableProps> = ({
 }) => {
 
   const [tab, setTab] = useState(0)
-  const [pageSize, setPageSize] = useState(25)
 
   const loading = useMemo(
     () =>
@@ -123,7 +119,7 @@ const Response: React.FC<ReportsTableProps> = ({
         {errorDetail}
         {loading}
         {pending}
-        {response !== undefined && <ResponseTable response={response} pageSize={pageSize} setPageSize={setPageSize} />}
+        {response !== undefined && <ResponseTable response={response} />}
       </TabPanel>
       <TabPanel value={tab} index={1}>
         {errorDetail}
@@ -235,50 +231,9 @@ const Aggregations: React.FC<{ response: RunReportResponse }> = ({
   );
 }
 
-const ResponseTable: React.FC<{ 
-  response: RunReportResponse; 
-  pageSize: number; 
-  setPageSize: (size: number) => void; 
-}> = ({
+const ResponseTable: React.FC<{ response: RunReportResponse }> = ({
   response,
-  pageSize,
-  setPageSize,
 }) => {
-  
-  const downloadData = (format: 'csv' | 'tsv') => {
-    const separator = format === 'csv' ? ',' : '\t';
-    const fileExtension = format === 'csv' ? 'csv' : 'tsv';
-    
-    // Create header row
-    const headers = columns.map(col => col.headerName || col.field);
-    const headerRow = headers.join(separator);
-    
-    // Create data rows
-    const dataRows = rows.map(row => 
-      columns.map(col => {
-        const value = row[col.field] || '';
-        // Escape quotes and wrap in quotes if contains separator or quotes
-        if (format === 'csv' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
-          return `"${value.replace(/"/g, '""')}"`;
-        }
-        return value;
-      }).join(separator)
-    );
-    
-    // Combine header and data
-    const content = [headerRow, ...dataRows].join('\n');
-    
-    // Create and download file
-    const blob = new Blob([content], { type: `text/${format}` });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `ga4-query-results.${fileExtension}`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  };
   const columns = useMemo<GridColDef[]>(
     () =>
       (response.dimensionHeaders || [])
@@ -309,48 +264,8 @@ const ResponseTable: React.FC<{
 
   return (
     <>
-      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-        <Typography variant="body2">Rows per page:</Typography>
-        <TextField
-          size="small"
-          type="number"
-          value={pageSize}
-          onChange={(e) => {
-            const value = parseInt(e.target.value, 10);
-            if (value > 0 && value <= 1000) {
-              setPageSize(value);
-            }
-          }}
-          inputProps={{ min: 1, max: 1000 }}
-          sx={{ width: 100 }}
-        />
-        <Box sx={{ ml: 'auto', display: 'flex', gap: 1 }}>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<DownloadIcon />}
-            onClick={() => downloadData('csv')}
-          >
-            Download CSV
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<DownloadIcon />}
-            onClick={() => downloadData('tsv')}
-          >
-            Download TSV
-          </Button>
-        </Box>
-      </Box>
       <div style={{ height: 600, width: "100%" }}>
-        <DataGrid 
-          rows={rows} 
-          columns={columns} 
-          pageSize={pageSize}
-          rowsPerPageOptions={[10, 25, 50, 100]}
-          pagination
-        />
+        <DataGrid rows={rows} columns={columns} autoPageSize />
       </div>
       <Aggregations response={response} />
     </>
