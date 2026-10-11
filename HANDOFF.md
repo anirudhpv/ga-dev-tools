@@ -45,14 +45,14 @@ Run our own improved version of Google's GA Demos & Tools
 Option A, Git-connected (auto-deploys on every push to `main`). Dashboard:
 Workers & Pages → Create → Pages → Connect to Git → `anirudhpv/ga-dev-tools`, branch `main`.
 
-| Setting | Value |
-| --- | --- |
-| Framework preset | None |
-| Build command | `yarn install && yarn build:cloudflare` |
-| Output directory | `public` |
-| Env `GAPI_CLIENT_ID` | the Google OAuth client ID |
-| Env `NODE_VERSION` | `22` |
-| Env `PUPPETEER_SKIP_DOWNLOAD` | `1` |
+| Setting                       | Value                                           |
+| ----------------------------- | ----------------------------------------------- |
+| Framework preset              | None                                            |
+| Build command                 | `yarn install && yarn build:cloudflare`         |
+| Output directory              | `public`                                        |
+| Env `GAPI_CLIENT_ID`          | the Google OAuth client ID                      |
+| Env `NODE_VERSION`            | `22`                                            |
+| Env `PUPPETEER_SKIP_DOWNLOAD` | `1`                                             |
 | Env `SKIP_DEPENDENCY_INSTALL` | `1` (stops Pages' own npm install; we use yarn) |
 
 Option B, manual from the CLI: owner runs `npx wrangler login` once, then
@@ -65,6 +65,7 @@ client's **Authorized JavaScript origins** in Google Cloud Console.
 ### 3. Modernise the UI (proposed, not started)
 
 Why it feels old and glitchy:
+
 1. Three styling systems mixed: MUI `styled`/emotion, deprecated `@mui/styles` (JSS),
    and CSS modules (`src/components/ga4/EnhancedEcommerce/*.module.css`). Likely
    cause of style flashes and layout shifts on load.
@@ -73,6 +74,7 @@ Why it feels old and glitchy:
 4. No dark mode; weak mobile layout.
 
 Suggested order:
+
 1. **Quick wins:** remove `@mui/styles`; set up the emotion cache for Gatsby
    SSR properly; add a custom theme (palette, typography, spacing, shape) with
    dark mode; align MUI package versions.
