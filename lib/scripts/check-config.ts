@@ -18,29 +18,20 @@ type ConfigQuestionFilter = {
   askAll?: true | undefined
 } & Partial<RuntimeJson>
 
-export const writeEnvFile = async (
-  config: CommonConfig,
-  endpointName: string = "bitly_auth"
-) => {
+export const writeEnvFile = async (config: CommonConfig) => {
   // If any questions are skipped, don't include them in the outgoing .env
   // files so they are `undefined` for `process.env[ENV_NAME]`.
   const gapiLine =
     config.gapiClientId === SKIP_QUESTION
       ? undefined
       : `GAPI_CLIENT_ID=${config.gapiClientId}`
-  const bitlyLine =
-    config.bitlyClientId === SKIP_QUESTION
-      ? undefined
-      : `BITLY_CLIENT_ID=${config.bitlyClientId}`
-
-  const authEndpointLine = `AUTH_ENDPOINT=https://us-central1-${config.firebaseProjectId}.cloudfunctions.net/${endpointName}`
 
   const measurementIdLine = `GA_MEASUREMENT_ID=${config.measurementId}`
 
   ;[DotEnvProductionPath, DotEnvDevelopmentPath].map(path =>
     fs.writeFileSync(
       path,
-      [gapiLine, bitlyLine, authEndpointLine, measurementIdLine].join("\n"),
+      [gapiLine, measurementIdLine].join("\n"),
       {
         encoding: Encoding,
       }
@@ -118,26 +109,6 @@ const configQuestions = (
       },
     },
     {
-      name: AnswerNames.BitlyClientIdProd,
-      type: "input",
-      message: "Bit.ly client ID (production):",
-      default: filter?.production?.bitlyClientId || SKIP_QUESTION,
-      when: () => {
-        return filter.askAll || filter?.production?.bitlyClientId === undefined
-      },
-    },
-    {
-      name: AnswerNames.BitlyClientSecretProd,
-      type: "input",
-      message: "Bit.ly client secret (production):",
-      default: filter?.production?.bitlyClientSecret || SKIP_QUESTION,
-      when: () => {
-        return (
-          filter.askAll || filter?.production?.bitlyClientSecret === undefined
-        )
-      },
-    },
-    {
       name: AnswerNames.MeasurementIdProd,
       type: "input",
       message: "GA Measurement ID (production):",
@@ -175,24 +146,6 @@ const configQuestions = (
       default: filter?.staging?.gapiClientId || SKIP_QUESTION,
       when: () => {
         return filter.askAll || filter?.staging?.gapiClientId === undefined
-      },
-    },
-    {
-      name: AnswerNames.BitlyClientIdStaging,
-      type: "input",
-      message: "Bit.ly client ID (staging):",
-      default: filter?.staging?.bitlyClientId || SKIP_QUESTION,
-      when: () => {
-        return filter.askAll || filter?.staging?.bitlyClientId === undefined
-      },
-    },
-    {
-      name: AnswerNames.BitlyClientSecretStaging,
-      type: "input",
-      message: "Bit.ly client secret (staging):",
-      default: filter?.staging?.bitlyClientSecret || SKIP_QUESTION,
-      when: () => {
-        return filter.askAll || filter?.staging?.bitlyClientSecret === undefined
       },
     },
     {
@@ -271,13 +224,6 @@ const toRuntimeJson = (
     gapiClientId: throwIfUndefined(
       answers.gapiClientIdProd || currentConfig?.production?.gapiClientId
     ),
-    bitlyClientId: throwIfUndefined(
-      answers.bitlyClientIdProd || currentConfig?.production?.bitlyClientId
-    ),
-    bitlyClientSecret: throwIfUndefined(
-      answers.bitlyClientSecretProd ||
-        currentConfig?.production?.bitlyClientSecret
-    ),
   }
 
   const staging: StagingConfig = {
@@ -295,13 +241,6 @@ const toRuntimeJson = (
     ),
     gapiClientId: throwIfUndefined(
       answers.gapiClientIdStaging || currentConfig?.staging?.gapiClientId
-    ),
-    bitlyClientId: throwIfUndefined(
-      answers.bitlyClientIdStaging || currentConfig?.staging?.bitlyClientId
-    ),
-    bitlyClientSecret: throwIfUndefined(
-      answers.bitlyClientSecretStaging ||
-        currentConfig?.staging?.bitlyClientSecret
     ),
   }
 
@@ -326,14 +265,6 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
     throw new Error("Missing the staging firebaseProjectId")
   }
 
-  if (runtimeJson.staging.bitlyClientSecret === undefined) {
-    throw new Error("Missing the staging bitly client secret")
-  }
-
-  if (runtimeJson.staging.bitlyClientId === undefined) {
-    throw new Error("Missing the staging bitly client id")
-  }
-
   if (runtimeJson.staging.baseUri === undefined) {
     throw new Error("Missing the staging base url")
   }
@@ -348,14 +279,6 @@ const assertAllValues = (runtimeJson: RuntimeJson): RuntimeJson => {
 
   if (runtimeJson.production.firebaseProjectId === undefined) {
     throw new Error("Missing the production firebaseProjectId")
-  }
-
-  if (runtimeJson.production.bitlyClientId === undefined) {
-    throw new Error("Missing the bitly clientId")
-  }
-
-  if (runtimeJson.production.bitlyClientSecret === undefined) {
-    throw new Error("Missing the bitly clientSecret")
   }
 
   if (runtimeJson.production.baseUri === undefined) {

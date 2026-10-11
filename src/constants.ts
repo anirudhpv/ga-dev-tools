@@ -160,8 +160,6 @@ export enum StorageKey {
   campaignBuilderTerm = "campaign-builder/term",
   campaignBuilderContent = "campaign-builder/content",
   campaignBuilderUseFragment = "campaign-builder/use-fragment",
-  bitlyAccessToken = "bitly-auth/access-token",
-  bitlyCache = "bitly-auth/cache-storage",
 
   // UA Request Composer
   requestComposerAPV = "request-composer/apv",
@@ -253,15 +251,6 @@ export enum StorageKey {
   ga4EventBuilderPayload = "ga4/event-builder/payload",
   ga4EventBuilderPayloadObj = "ga4/event-builder/payload-obj",
   ga4EventBuilderPayloadError = "ga4/event-builder/payload-error",
-}
-
-export const EventAction = {
-  bitlyShorten: "bitly_shorten",
-  bitlyAuth: "bitly_auth",
-}
-
-export const EventCategory = {
-  campaignUrlBuilder: "Campaign URL Builder",
 }
 
 export const TimestampScope = {

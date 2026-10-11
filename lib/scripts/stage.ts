@@ -2,7 +2,25 @@ import { execa } from "execa";
 import { build } from "./build.js"
 import { checkConfig, writeEnvFile } from "./check-config.js"
 import { DeployArgs, Environment } from "./types.js"
-import { ensureFirebaseLoginStatus } from "./deploy-functions.js"
+
+const ensureFirebaseLoginStatus = async ({
+  noLocalhost,
+}: {
+  noLocalhost: boolean
+}) => {
+  console.log("Logging out of firebase since tokens are shortlived...")
+  await execa("yarn", ["run", "firebase", "logout"])
+
+  return execa(
+    "yarn",
+    ["run", "firebase", "login", ...(noLocalhost ? ["--no-localhost"] : [])],
+    {
+      stderr: "inherit",
+      stdout: "inherit",
+      stdin: "inherit",
+    }
+  )
+}
 
 export const stage = async (args: DeployArgs) => {
   const config = await checkConfig({
@@ -17,21 +35,10 @@ export const stage = async (args: DeployArgs) => {
       : {
           ...config.staging,
           firebaseProjectId: config.production.firebaseProjectId,
-        },
-    args.environment === Environment.Staging
-      ? "bitly_auth_integration"
-      : undefined
+        }
   )
 
   await ensureFirebaseLoginStatus({ noLocalhost: args.noLocalhost })
-
-  // TODO - should stage also do functions, or should they be managed
-  // separately?
-  //
-  // await ensureFirebaseFunctionsConfig({
-  //   ...config,
-  //   noLocalhost: args.noLocalhost,
-  // })
 
   let projectId: string
   if (args.environment === Environment.Staging) {

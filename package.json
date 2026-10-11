@@ -125,10 +125,8 @@
     "deploy:app:production": "yarn generate-scripts && node lib/build/index.js deploy --environment=production",
     "build:app:production": "yarn generate-scripts && node lib/build/index.js build --environment=production",
     "serve:app:production": "yarn generate-scripts && node lib/build/index.js serve --environment=production",
-    "deploy:functions:production": "yarn generate-scripts && node lib/build/index.js deploy-functions --environment=production",
     "start:app:staging": "yarn run develop --environment=staging",
     "deploy:app:staging": "yarn generate-scripts && node lib/build/index.js deploy --environment=staging",
-    "deploy:functions:staging": "yarn generate-scripts && node lib/build/index.js deploy-functions --environment=staging",
     "build:app:staging": "yarn generate-scripts && node lib/build/index.js build --environment=production",
     "build:cloudflare": "node scripts/write-env.js && gatsby build"
   }

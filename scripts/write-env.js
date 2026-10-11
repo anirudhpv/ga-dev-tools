@@ -2,12 +2,7 @@
 // non-interactively (e.g. on Cloudflare Pages) without `yarn check-config`.
 const fs = require("fs")
 
-const keys = [
-  "GAPI_CLIENT_ID",
-  "BITLY_CLIENT_ID",
-  "AUTH_ENDPOINT",
-  "GA_MEASUREMENT_ID",
-]
+const keys = ["GAPI_CLIENT_ID", "GA_MEASUREMENT_ID"]
 const lines = keys
   .filter(key => process.env[key])
   .map(key => `${key}=${process.env[key]}`)

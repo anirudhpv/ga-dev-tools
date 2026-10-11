@@ -31,14 +31,12 @@ Run our own improved version of Google's GA Demos & Tools
 
 ## Next steps
 
-### 1. Remove the Bit.ly feature (not started, needs owner approval)
+### 1. Remove the Bit.ly feature (done)
 
-- "Shorten link" button: `src/components/CampaignURLBuilder/Web/GeneratedURL/index.tsx`
-  (uses `src/components/ShortenLink/`).
-- `src/pages/bitly-auth.tsx`, `src/images/bitly-logo.svg`, `functions/` (Firebase
-  Cloud Function for Bit.ly OAuth), Bit.ly prompts in `lib/scripts/check-config.ts`.
-- Update `src/components/CampaignURLBuilder/index.spec.tsx` accordingly.
-- Firebase-only bits (`firebase.json`, `deploy*`/`stage`/`serve` scripts) can go later.
+Removed the Shorten link UI, `bitly-auth` page, `functions/`, the `deploy-functions`
+command and the Bit.ly config prompts. `check-types`, CampaignURLBuilder Jest tests and
+`yarn build:cloudflare` pass. Pages also get `noindex` via `static/_headers` and a
+robots meta tag in `gatsby-ssr.tsx` (owner's rule: keep deployed sites out of search).
 
 ### 2. Deploy to Cloudflare Pages
 
@@ -50,7 +48,7 @@ Workers & Pages → Create → Pages → Connect to Git → `anirudhpv/ga-dev-to
 | Framework preset              | None                                            |
 | Build command                 | `yarn install && yarn build:cloudflare`         |
 | Output directory              | `public`                                        |
-| Env `GAPI_CLIENT_ID`          | the Google OAuth client ID                      |
+| Env `GAPI_CLIENT_ID`          | the Google OAuth client ID (public, not secret) |
 | Env `NODE_VERSION`            | `22`                                            |
 | Env `PUPPETEER_SKIP_DOWNLOAD` | `1`                                             |
 | Env `SKIP_DEPENDENCY_INSTALL` | `1` (stops Pages' own npm install; we use yarn) |

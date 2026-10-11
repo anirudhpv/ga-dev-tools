@@ -12,7 +12,6 @@ import {
   StagingConfig,
   ProductionConfig,
 } from "./types.js"
-import { deployFunctions } from "./deploy-functions.js"
 
 export const configForEnvironment = (
   environment: Environment,
@@ -68,17 +67,11 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
     help: "Builds the project and deploys it to `--environment`.",
   })
 
-  const deployFunctionsParser = subparsers.add_parser(Command.DeployFunctions, {
-    help: "Builds ./functions project and deploys it to `--environment`.",
+  deployParser.add_argument("--no-localhost", {
+    default: false,
+    dest: "noLocalhost",
+    action: "storeTrue",
   })
-
-  ;[deployParser, deployFunctionsParser].map(parser =>
-    parser.add_argument("--no-localhost", {
-      default: false,
-      dest: "noLocalhost",
-      action: "storeTrue",
-    })
-  )
 
   const developParser = subparsers.add_parser(Command.Develop, {
     help:
@@ -100,7 +93,6 @@ const getParser = async (): Promise<argparse.ArgumentParser> => {
     buildParser,
     serveParser,
     deployParser,
-    deployFunctionsParser,
     developParser,
   ].forEach(parser => {
     parser.add_argument("--environment", {
@@ -136,10 +128,6 @@ const scripts = async () => {
     }
     case Command.Deploy: {
       await stage(args)
-      break
-    }
-    case Command.DeployFunctions: {
-      await deployFunctions(args)
       break
     }
   }

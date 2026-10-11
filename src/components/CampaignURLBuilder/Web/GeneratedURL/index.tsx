@@ -10,11 +10,9 @@ import TextField from "@mui/material/TextField"
 import { GAVersion } from "@/constants"
 import WarningsFor from "./WarningsFor"
 import useGenerateURL from "./useGenerateURL"
-import ShortenLink from "@/components/ShortenLink"
 import useInputs from "./useInputs"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import { CopyIconButton } from "@/components/CopyButton"
-import Warning from "@/components/Warning"
 
 const PREFIX = 'GeneratedURL';
 
@@ -23,7 +21,6 @@ const classes = {
   share: `${PREFIX}-share`,
   form: `${PREFIX}-form`,
   shareInvalid: `${PREFIX}-shareInvalid`,
-  shortened: `${PREFIX}-shortened`
 };
 
 const StyledPaper = styled(Paper)((
@@ -57,18 +54,6 @@ const StyledPaper = styled(Paper)((
       paddingBottom: "unset",
     },
   },
-
-  [`& .${classes.shortened}`]: {
-    marginTop: theme.spacing(1),
-    display: "flex",
-    alignItems: "center",
-    "& > :first-child": {
-      flexGrow: 1,
-    },
-    "& > :not(:first-child)": {
-      marginLeft: theme.spacing(1),
-    },
-  },
 }));
 
 interface GeneratedURLProps {
@@ -97,10 +82,6 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
   const {
     useFragment,
     setUseFragment,
-    shortened,
-    setShortened,
-    shortenError,
-    setShortenError,
     hasWarning,
     setHasWarning,
   } = useInputs()
@@ -116,7 +97,6 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
   }, [version, websiteURL, source, medium])
 
   const generatedURL = useGenerateURL({
-    setShortened,
     websiteURL,
     source,
     medium,
@@ -166,44 +146,6 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
                 )
               </Typography>
             </LabeledCheckbox>
-            <section className={classes.shortened}>
-              <TextField
-                id="shortened-url"
-                label="shortened URL"
-                disabled={shortened === undefined}
-                value={
-                  shortened ||
-                  "Click shorten link to shorten your generated URL."
-                }
-                size="small"
-                variant="outlined"
-                className={classes.generatedInput}
-                InputProps={{
-                  endAdornment: (
-                    <CopyIconButton
-                      disabled={shortened === undefined}
-                      toCopy={shortened || ""}
-                      tooltipText="Copy shortened URL."
-                    />
-                  ),
-                }}
-              />
-              <div>
-                <ShortenLink
-                  disabled={shortened !== undefined}
-                  medium
-                  url={generatedURL}
-                  setShortened={setShortened}
-                  setError={setShortenError}
-                />
-              </div>
-            </section>
-            {shortenError && (
-              <Warning>
-                There was an error with shortening your URL: <br />{" "}
-                {shortenError}
-              </Warning>
-            )}
           </>
         ) : (
           <section className={classes.shareInvalid}>

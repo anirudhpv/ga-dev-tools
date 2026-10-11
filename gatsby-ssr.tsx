@@ -9,6 +9,19 @@ import CustomLayout from "./gatsby/wrapRootElement"
 
 export const wrapPageElement: GatsbySSR["wrapPageElement"] = CustomLayout
 
+// Keep the site out of search engine results.
+export const onRenderBody: GatsbySSR["onRenderBody"] = ({
+  setHeadComponents,
+}) => {
+  setHeadComponents([
+    <meta
+      key="robots"
+      name="robots"
+      content="noindex, nofollow, noarchive"
+    />,
+  ])
+}
+
 // Wrap every page using a StoreProvider object used by eCommerce demo.
 // export const wrapRootElement = ({ element }) => (
 //     {element}
