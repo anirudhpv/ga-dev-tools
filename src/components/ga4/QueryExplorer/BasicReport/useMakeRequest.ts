@@ -123,7 +123,8 @@ const useMakeRequest = ({
       r.keepEmptyRows = keepEmptyRows
     }
     if (metricAggregations !== undefined && metricAggregations.length !== 0) {
-      r.metricAggregations = metricAggregations
+      r.metricAggregations =
+        metricAggregations as gapi.client.analyticsdata.RunReportRequest["metricAggregations"]
     }
     return r
   }, [

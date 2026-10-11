@@ -106,7 +106,10 @@ const NumericFilter: React.FC<NumericFilterProps> = ({
         value={optionFor(numericFilter.operation as OperationType | undefined)}
         label="operation"
         onChange={option => {
-          updateNumericFilter(old => ({ ...old, operation: option?.value }))
+          updateNumericFilter(old => ({
+            ...old,
+            operation: option?.value as NFilter["operation"],
+          }))
         }}
         options={operationOptions}
       />

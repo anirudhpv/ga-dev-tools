@@ -68,7 +68,10 @@ const StringFilter: React.FC<StringFilterProps> = ({
         label="match type"
         value={matchValue}
         onChange={nu => {
-          updateStringFilter(old => ({ ...old, matchType: nu?.value }))
+          updateStringFilter(old => ({
+            ...old,
+            matchType: nu?.value as SFilter["matchType"],
+          }))
         }}
         options={matchOptions}
       />
