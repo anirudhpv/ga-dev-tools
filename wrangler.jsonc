@@ -1,0 +1,9 @@
+// Cloudflare Workers static-assets deployment. Built by `yarn build:cloudflare`.
+{
+  "name": "ga-dev-tools",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page"
+  }
+}
