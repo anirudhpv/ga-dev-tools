@@ -172,6 +172,31 @@ const BasicReport = () => {
     status: requestStatus,
   } = useMake
 
+  // Pressing Enter in a text field runs the report, like submitting a form.
+  // Enter inside an open dropdown still picks an option, and Ctrl/Cmd+Enter
+  // runs the report from anywhere in the form.
+  const onFormKeyDown = React.useCallback(
+    (e: React.KeyboardEvent<HTMLElement>) => {
+      if (e.key !== "Enter" || e.shiftKey || e.nativeEvent.isComposing) {
+        return
+      }
+      const target = e.target as HTMLElement
+      const forced = e.ctrlKey || e.metaKey
+      const isTextInput =
+        target instanceof HTMLInputElement &&
+        !["checkbox", "radio", "button", "submit"].includes(target.type)
+      const popupOpen = target.getAttribute("aria-expanded") === "true"
+      if (!forced && (!isTextInput || popupOpen)) {
+        return
+      }
+      if (validRequest) {
+        e.preventDefault()
+        makeRequest()
+      }
+    },
+    [validRequest, makeRequest]
+  )
+
   const metricOrDimensionSelected = React.useMemo(() => {
     return !!(
       (metrics !== undefined && metrics.length > 0) ||
@@ -191,7 +216,7 @@ const BasicReport = () => {
             Analytics measurement code. Basic Report uses the {runReportLink}{" "}
             API endpoint.
           </Typography>
-          <section className={classes.form}>
+          <section className={classes.form} onKeyDown={onFormKeyDown}>
             <Typography variant="h3">Select property</Typography>
             <StreamPicker autoFill {...aps} />
             <Typography variant="h3">Set parameters</Typography>
