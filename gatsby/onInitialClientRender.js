@@ -23,6 +23,28 @@ const loadGis = () =>
     })
   })
 
+// Fetches the signed-in user's name, email & photo. Tokens granted before the
+// profile scopes were added get a 401 here, so the profile is just left empty.
+const fetchProfile = token => {
+  fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+    headers: { Authorization: `Bearer ${token.access_token}` },
+  })
+    .then(response => (response.ok ? response.json() : undefined))
+    .then(profile => {
+      if (profile) {
+        store.dispatch({
+          type: "setProfile",
+          profile: {
+            name: profile.name,
+            email: profile.email,
+            picture: profile.picture,
+          },
+        })
+      }
+    })
+    .catch(e => console.error("Unable to load the user's profile:", e))
+}
+
 // Google sign-in previously managed signed-in status. With GIS we restore the
 // token from localStorage ourselves.
 const restoreToken = gapi => {
@@ -33,6 +55,7 @@ const restoreToken = gapi => {
       if (storedToken.expires_at > Date.now()) {
         gapi.client.setToken(storedToken)
         store.dispatch({ type: "setToken", token: storedToken })
+        fetchProfile(storedToken)
       } else {
         localStorage.removeItem("google_token")
       }
@@ -44,7 +67,12 @@ const restoreToken = gapi => {
 }
 
 export const onInitialClientRender = () => {
-  const SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]
+  const SCOPES = [
+    "https://www.googleapis.com/auth/analytics.readonly",
+    "openid",
+    "email",
+    "profile",
+  ]
   const clientId = process.env.GAPI_CLIENT_ID
 
   if (!clientId) {
@@ -94,6 +122,7 @@ export const onInitialClientRender = () => {
             )
             gapi.client.setToken(tokenResponse)
             store.dispatch({ type: "setToken", token: tokenResponse })
+            fetchProfile(tokenResponse)
           } else {
             store.dispatch({ type: "setToken", token: undefined })
           }
