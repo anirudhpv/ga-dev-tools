@@ -26,18 +26,10 @@ const StyledUseFilterContextProvider = styled(UseFilterContext.Provider)((
     theme
   }
 ) => ({
-  [`& .${classes.filter}`]: ({ notched }: Props) => ({
-    marginTop: notched ? theme.spacing(1) : "unset",
-  }),
-
   [`& .${classes.title}`]: {
     margin: theme.spacing(1, 0),
   }
 }));
-
-interface Props {
-  notched: boolean
-}
 
 export enum FilterType {
   Metric = "metric",
