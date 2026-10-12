@@ -1,5 +1,16 @@
 # Handoff: ga-dev-tools fork
 
+> **Two-repo setup (decided 2026-10-13)**
+>
+> - **This repo, `anirudhpv/ga-dev-tools-classic`** (GitHub fork of Google's repo):
+>   Google's Gatsby app with our fixes. Generic fixes also go to Google as pull requests,
+>   signed as Anirudh Venkat `<16452894+anirudhpv@users.noreply.github.com>` with no
+>   Claude attribution (the owner signs Google's individual CLA). Moves to the Cloudflare
+>   address `ga-dev-tools-classic.ballp.workers.dev` once Pro is ready.
+> - **`anirudhpv/ga-dev-tools-pro`** (private, new): a rebuild in Vite + React + Mantine
+>   with its own branding, starting with the Query Explorer. When it's ready it
+>   takes over the main address `ga-dev-tools.ballp.workers.dev`.
+
 Context for a new Claude Code session picking up this project.
 
 ## Goal
@@ -60,25 +71,27 @@ Option B, manual from the CLI: owner runs `npx wrangler login` once, then
 After the first deploy, add the `https://<project>.pages.dev` URL to the OAuth
 client's **Authorized JavaScript origins** in Google Cloud Console.
 
-### 3. Modernise the UI (proposed, not started)
+### 3. Modernise the UI (planned, on hold by owner's choice)
 
-Why it feels old and glitchy:
+Decisions so far (2026-10-13):
 
-1. Three styling systems mixed: MUI `styled`/emotion, deprecated `@mui/styles` (JSS),
-   and CSS modules (`src/components/ga4/EnhancedEcommerce/*.module.css`). Likely
-   cause of style flashes and layout shifts on load.
-2. Stock MUI v5 theme with no customisation.
-3. Version mismatch: `@mui/x-date-pickers` v8 against `@mui/material` v5.
-4. No dark mode; weak mobile layout.
+- **Focus: Query Explorer.** Other tools are lower priority.
+- **Library: Mantine** (independent, MIT). Owner prefers tools not owned by Vercel,
+  so shadcn/ui is out.
+- **Brand:** Inter font; orange `#e8793a` / `#d4662a` for primary
+  buttons (135deg gradient, pill-shaped, soft orange glow); teal `#5ba4a4` for accents
+  and links; dark navy/black background (`#020205`, `#0f1a2e`, `#0a1119`); glass cards
+  (white at 4-5% opacity, 12-20px corners); inputs with 8px corners and a white 10%
+  border.
+- **Theme: dark by default, with a switch to light mode.**
+- **Plan:** build a pilot Query Explorer on a separate route (e.g.
+  `/ga4/query-explorer-beta/`) that reuses the existing hooks (`useInputs`,
+  `useMakeRequest`, `useAccounts`, `useDimensionsAndMetrics`) and only replaces the UI.
+  Review it with the owner, then decide whether to roll it out to the other tools.
 
-Suggested order:
-
-1. **Quick wins:** remove `@mui/styles`; set up the emotion cache for Gatsby
-   SSR properly; add a custom theme (palette, typography, spacing, shape) with
-   dark mode; align MUI package versions.
-2. **Pilot:** redesign one tool (Query Explorer) end to end, then review with the owner.
-3. **Then decide:** upgrade to the latest MUI and roll the redesign to the other tools,
-   or rebuild the UI on a modern stack (e.g. Vite/Next + Tailwind + shadcn/ui).
+Style regressions from upstream's makeStyles → `styled()` codemod (commit `598a24f`) were
+fixed in `3dc7e49` and `092dca5`. Still open: React hydration errors #418/#423 on the
+Campaign URL Builder (present upstream too).
 
 ## Gotchas
 
