@@ -1,5 +1,5 @@
 import * as React from "react"
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 import { useState, useMemo } from "react"
 
 import clsx from "classnames"
@@ -26,19 +26,15 @@ import NumericFilter, { OperationType } from "./NumericFilter"
 import InListFilter from "./InListFilter"
 import BetweenFilter from "./BetweenFilter"
 
-const PREFIX = 'Filter';
+const PREFIX = "Filter"
 
-const classes = {
+export const classes = {
   caseSensitive: `${PREFIX}-caseSensitive`,
   button: `${PREFIX}-button`,
-  filter: `${PREFIX}-filter`
-};
+  filter: `${PREFIX}-filter`,
+}
 
-const Root = styled('div')((
-  {
-    theme
-  }
-) => ({
+const Root = styled("div")(({ theme }) => ({
   [`& .${classes.caseSensitive}`]: {
     marginLeft: theme.spacing(1),
     marginTop: "0 !important",
@@ -54,10 +50,8 @@ const Root = styled('div')((
     "&> :not(:first-child)": {
       marginTop: theme.spacing(1),
     },
-  }
-}));
-
-export {};
+  },
+}))
 
 const Filter: React.FC<{
   filter: BaseFilter
@@ -77,7 +71,6 @@ const Filter: React.FC<{
   path,
   type,
 }) => {
-
   const [dimension, setDimension] = useState<GA4Dimension>()
   const [metric, setMetric] = useState<GA4Metric>()
 
@@ -144,71 +137,74 @@ const Filter: React.FC<{
   const { showAdvanced } = React.useContext(UseFilterContext)!
 
   return (
-      <Root>
-        <WithHelpText
-          notched={showAdvanced}
-          label={showAdvanced ? "filter" : undefined}
-        >
-          <section className={classes.filter}>
-            {type === "metric" ? (
-              <MetricPicker
-                label="metric"
-                autoSelectIfOne={showAdvanced}
-                metricFilter={metricFilter}
-                setMetric={setMetric}
-              />
-            ) : (
-              <DimensionPicker
-                label="dimension"
-                autoSelectIfOne={showAdvanced}
-                dimensionFilter={dimensionFilter}
-                setDimension={setDimension}
-              />
-            )}
-            <Select
-              value={filterOption}
-              label="filter type"
-              onChange={nu => {
-                if (nu === undefined) {
-                  return
-                }
-                const value = {} as { operation?: OperationType, matchType?: MatchType}
-                if (nu.value === "numericFilter") {
-                  value["operation"] = OperationType.Equal
-                }
-                if (nu.value === "stringFilter") {
-                  value["matchType"] = MatchType.Exact
-                }
-                updateFilter(path, old => ({
-                  fieldName: old.fieldName,
-                  [nu.value]: value,
-                }))
-              }}
-              options={
-                type === "metric"
-                  ? [
-                      { value: "numericFilter", displayName: "numeric" },
-                      { value: "betweenFilter", displayName: "between" },
-                    ]
-                  : [
-                      { value: "stringFilter", displayName: "string" },
-                      { value: "inListFilter", displayName: "in list" },
-                    ]
-              }
+    <Root>
+      <WithHelpText
+        notched={showAdvanced}
+        label={showAdvanced ? "filter" : undefined}
+      >
+        <section className={classes.filter}>
+          {type === "metric" ? (
+            <MetricPicker
+              label="metric"
+              autoSelectIfOne={showAdvanced}
+              metricFilter={metricFilter}
+              setMetric={setMetric}
             />
-            {inner}
-          </section>
-
-          {showAdvanced && (
-            <div className={clsx(classes.button)}>
-              <SAB onClick={onClick} small delete>
-                filter
-              </SAB>
-            </div>
+          ) : (
+            <DimensionPicker
+              label="dimension"
+              autoSelectIfOne={showAdvanced}
+              dimensionFilter={dimensionFilter}
+              setDimension={setDimension}
+            />
           )}
-        </WithHelpText>
-      </Root>
-  );
+          <Select
+            value={filterOption}
+            label="filter type"
+            onChange={nu => {
+              if (nu === undefined) {
+                return
+              }
+              const value = {} as {
+                operation?: OperationType
+                matchType?: MatchType
+              }
+              if (nu.value === "numericFilter") {
+                value["operation"] = OperationType.Equal
+              }
+              if (nu.value === "stringFilter") {
+                value["matchType"] = MatchType.Exact
+              }
+              updateFilter(path, old => ({
+                fieldName: old.fieldName,
+                [nu.value]: value,
+              }))
+            }}
+            options={
+              type === "metric"
+                ? [
+                    { value: "numericFilter", displayName: "numeric" },
+                    { value: "betweenFilter", displayName: "between" },
+                  ]
+                : [
+                    { value: "stringFilter", displayName: "string" },
+                    { value: "inListFilter", displayName: "in list" },
+                  ]
+            }
+          />
+          {inner}
+        </section>
+
+        {showAdvanced && (
+          <div className={clsx(classes.button)}>
+            <SAB onClick={onClick} small delete>
+              filter
+            </SAB>
+          </div>
+        )}
+      </WithHelpText>
+    </Root>
+  )
 }
 
 export default Filter

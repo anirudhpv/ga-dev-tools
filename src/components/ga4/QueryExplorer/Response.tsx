@@ -1,6 +1,6 @@
-import React, {useState, useMemo, PropsWithChildren} from "react"
+import React, { useState, useMemo, PropsWithChildren } from "react"
 
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import Box from "@mui/material/Box"
@@ -13,19 +13,15 @@ import PrettyJson from "@/components/PrettyJson"
 import Spinner from "@/components/Spinner"
 import { RunReportResponse, RunReportError } from "./BasicReport/useMakeRequest"
 
-const PREFIX = 'Response';
+const PREFIX = "Response"
 
 const classes = {
   container: `${PREFIX}-container`,
   makeRequest: `${PREFIX}-makeRequest`,
-  reports: `${PREFIX}-reports`
-};
+  reports: `${PREFIX}-reports`,
+}
 
-const Root = styled('div')((
-  {
-    theme
-  }
-) => ({
+const Root = styled("section")(({ theme }) => ({
   [`& .${classes.container}`]: {
     maxHeight: 440,
   },
@@ -35,10 +31,10 @@ const Root = styled('div')((
     marginBottom: theme.spacing(2),
   },
 
-  [`& .${classes.reports}`]: {
+  [`&.${classes.reports}`]: {
     marginTop: theme.spacing(2),
-  }
-}));
+  },
+}))
 
 type TabPanelProps = { value: number; index: number }
 const TabPanel: React.FC<PropsWithChildren<TabPanelProps>> = ({
@@ -71,7 +67,6 @@ const Response: React.FC<ReportsTableProps> = ({
   shouldCollapse,
   error,
 }) => {
-
   const [tab, setTab] = useState(0)
 
   const loading = useMemo(
@@ -104,7 +99,7 @@ const Response: React.FC<ReportsTableProps> = ({
   // TODO: Add button to save table response as a CSV & saving json response as
   // a json file.
   return (
-    <section className={classes.reports}>
+    <Root className={classes.reports}>
       <Typography variant="h3">Response</Typography>
       <Tabs
         value={tab}
@@ -131,7 +126,7 @@ const Response: React.FC<ReportsTableProps> = ({
           shouldCollapse={shouldCollapse}
         />
       </TabPanel>
-    </section>
+    </Root>
   )
 }
 
@@ -222,13 +217,13 @@ const Aggregations: React.FC<{ response: RunReportResponse }> = ({
   }
 
   return (
-    (<Root>
+    <>
       <Typography variant="h4">Metric aggregations</Typography>
       <div style={{ height: 600, width: "100%" }}>
         <DataGrid rows={rows} columns={columns} autoPageSize />
       </div>
-    </Root>)
-  );
+    </>
+  )
 }
 
 const ResponseTable: React.FC<{ response: RunReportResponse }> = ({
@@ -246,7 +241,7 @@ const ResponseTable: React.FC<{ response: RunReportResponse }> = ({
     [response]
   )
 
-   const rows = useMemo(
+  const rows = useMemo(
     () =>
       (response.rows || [])
         .map(row => (row.dimensionValues || []).concat(row.metricValues || []))

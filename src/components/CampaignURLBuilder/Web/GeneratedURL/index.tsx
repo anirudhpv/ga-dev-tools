@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 
 import clsx from "classnames"
 import Paper from "@mui/material/Paper"
@@ -14,25 +14,21 @@ import useInputs from "./useInputs"
 import LabeledCheckbox from "@/components/LabeledCheckbox"
 import { CopyIconButton } from "@/components/CopyButton"
 
-const PREFIX = 'GeneratedURL';
+const PREFIX = "GeneratedURL"
 
 const classes = {
   generatedInput: `${PREFIX}-generatedInput`,
   share: `${PREFIX}-share`,
   form: `${PREFIX}-form`,
   shareInvalid: `${PREFIX}-shareInvalid`,
-};
+}
 
-const StyledPaper = styled(Paper)((
-  {
-    theme
-  }
-) => ({
+const StyledPaper = styled(Paper)(({ theme }) => ({
   [`& .${classes.generatedInput}`]: {
     wordBreak: "break-all",
   },
 
-  [`& .${classes.form}`]: {
+  [`&.${classes.form}`]: {
     maxWidth: "80ch",
   },
 
@@ -54,7 +50,7 @@ const StyledPaper = styled(Paper)((
       paddingBottom: "unset",
     },
   },
-}));
+}))
 
 interface GeneratedURLProps {
   version: GAVersion
@@ -77,14 +73,7 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
   term,
   content,
 }) => {
-
-
-  const {
-    useFragment,
-    setUseFragment,
-    hasWarning,
-    setHasWarning,
-  } = useInputs()
+  const { useFragment, setUseFragment, hasWarning, setHasWarning } = useInputs()
 
   const hasRequiredFields = React.useMemo(() => {
     if (version === GAVersion.UniversalAnalytics) {
@@ -157,7 +146,7 @@ const GeneratedURL: React.FC<GeneratedURLProps> = ({
           </section>
         ))}
     </StyledPaper>
-  );
+  )
 }
 
 export default GeneratedURL

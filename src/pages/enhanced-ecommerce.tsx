@@ -14,7 +14,7 @@
 
 import * as React from "react"
 
-import { styled } from "@mui/material/styles";
+import { styled } from "@mui/material/styles"
 import Typography from "@mui/material/Typography"
 import { StaticImage } from "gatsby-plugin-image"
 
@@ -23,18 +23,14 @@ import Layout from "@/components/Layout"
 import CodeBlock from "@/components/CodeBlock"
 import ExternalLink from "@/components/ExternalLink"
 
-const PREFIX = 'EnhancedEcommerce';
+const PREFIX = "EnhancedEcommerce"
 
 const classes = {
   demoScreenshot: `${PREFIX}-demoScreenshot`,
-  codeBlock: `${PREFIX}-codeBlock`
-};
+  codeBlock: `${PREFIX}-codeBlock`,
+}
 
-const StyledLayout = styled(Layout)((
-  {
-    theme
-  }
-) => ({
+const Root = styled("div")(({ theme }) => ({
   [`& .${classes.demoScreenshot}`]: {
     marginBottom: theme.spacing(2),
     border: `1px solid ${theme.palette.grey[500]}`,
@@ -42,8 +38,8 @@ const StyledLayout = styled(Layout)((
 
   [`& .${classes.codeBlock}`]: {
     marginBottom: theme.spacing(2),
-  }
-}));
+  },
+}))
 
 const demoStore = (
   <ExternalLink href={Url.enhancedEcommerceDemo}>
@@ -116,51 +112,51 @@ const codeBlocks = [
   { code: ecJsExampleCode, title: "ec.js" },
 ]
 
-
 interface Props {
   location: { pathname: string }
 }
 
 const EnhancedEcommerce = (props: Props) => {
-
   return (
-    <StyledLayout
+    <Layout
       title="Enhanced Ecommerce"
       pathname={props.location.pathname}
       description="Explains how the enhanced ecommerce code works."
     >
-      <Typography variant="h2">Overview</Typography>
-      <Typography variant="body1">
-        The {demoStore} is a sample ecommerce application with a complete
-        implementation of {enhancedEcommerceHelp}. Use this demo to understand
-        how the Enhanced Ecommerce code works, and what is required to implement
-        it on your own site.
-      </Typography>
+      <Root>
+        <Typography variant="h2">Overview</Typography>
+        <Typography variant="body1">
+          The {demoStore} is a sample ecommerce application with a complete
+          implementation of {enhancedEcommerceHelp}. Use this demo to understand
+          how the Enhanced Ecommerce code works, and what is required to
+          implement it on your own site.
+        </Typography>
 
-      <a href={Url.enhancedEcommerceDemo}>
-        <StaticImage
-          className={classes.demoScreenshot}
-          alt="A screenshot from the Enhanced Ecommerce demo."
-          src="../images/screenshots/enhanced-ecommerce-2x.png"
+        <a href={Url.enhancedEcommerceDemo}>
+          <StaticImage
+            className={classes.demoScreenshot}
+            alt="A screenshot from the Enhanced Ecommerce demo."
+            src="../images/screenshots/enhanced-ecommerce-2x.png"
+          />
+        </a>
+        <Typography variant="body1">
+          Every action in this demo comes with code samples showing exactly how
+          the feature is implemented. The samples include code for both{" "}
+          {googleTagManager} and the {enhancedEcommerceAnalyticsJs} plugin for{" "}
+          {analyticsJs}.
+        </Typography>
+
+        <Typography variant="body1">
+          The following is an example "Add to cart" event:
+        </Typography>
+
+        <CodeBlock
+          language="javascript"
+          codeBlocks={codeBlocks}
+          className={classes.codeBlock}
         />
-      </a>
-      <Typography variant="body1">
-        Every action in this demo comes with code samples showing exactly how
-        the feature is implemented. The samples include code for both{" "}
-        {googleTagManager} and the {enhancedEcommerceAnalyticsJs} plugin for{" "}
-        {analyticsJs}.
-      </Typography>
-
-      <Typography variant="body1">
-        The following is an example "Add to cart" event:
-      </Typography>
-
-      <CodeBlock
-        language="javascript"
-        codeBlocks={codeBlocks}
-        className={classes.codeBlock}
-      />
-    </StyledLayout>
-  );
+      </Root>
+    </Layout>
+  )
 }
 export default EnhancedEcommerce

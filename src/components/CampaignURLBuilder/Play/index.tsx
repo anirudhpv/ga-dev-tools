@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 
 import Autocomplete from "@mui/material/Autocomplete"
 import Typography from "@mui/material/Typography"
@@ -15,7 +15,7 @@ import useGenerateURL from "./useGenerateURL"
 import ExternalLink from "@/components/ExternalLink"
 import { AdNetwork, supportedAdNetworks } from "../adNetworks"
 
-const PREFIX = 'PlayURLBuilder';
+const PREFIX = "PlayURLBuilder"
 
 const classes = {
   generatedInput: `${PREFIX}-generatedInput`,
@@ -26,14 +26,10 @@ const classes = {
   bold: `${PREFIX}-bold`,
   share: `${PREFIX}-share`,
   shareInvalid: `${PREFIX}-shareInvalid`,
-  form: `${PREFIX}-form`
-};
+  form: `${PREFIX}-form`,
+}
 
-const Root = styled('section')((
-  {
-    theme
-  }
-) => ({
+const Root = styled("section")(({ theme }) => ({
   [`& .${classes.generatedInput}`]: {
     wordBreak: "break-all",
   },
@@ -94,10 +90,10 @@ const Root = styled('section')((
     },
   },
 
-  [`& .${classes.form}`]: {
+  [`&.${classes.form}`]: {
     maxWidth: "80ch",
-  }
-}));
+  },
+}))
 
 interface PlayURLBuilderProps {
   version: GAVersion
@@ -108,8 +104,6 @@ const customCampaigns = (
 )
 
 const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
-
-
   const {
     setAdNetwork,
     setAppID,
@@ -263,7 +257,7 @@ const PlayURLBuilder: React.FC<PlayURLBuilderProps> = () => {
         )}
       </Paper>
     </Root>
-  );
+  )
 }
 
 export default PlayURLBuilder

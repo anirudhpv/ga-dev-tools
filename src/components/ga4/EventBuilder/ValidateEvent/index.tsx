@@ -14,7 +14,7 @@
 
 import React, { useContext } from "react"
 
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 
 import clsx from "classnames"
 
@@ -35,7 +35,7 @@ import { Box, Card } from "@mui/material"
 import { green, red } from "@mui/material/colors"
 import WithHelpText from "@/components/WithHelpText"
 
-const PREFIX = 'ValidateEvent';
+const PREFIX = "ValidateEvent"
 
 interface TemplateProps {
   heading: string
@@ -71,16 +71,14 @@ const classes = {
   payloadTitle: `${PREFIX}-payloadTitle`,
   headers: `${PREFIX}-headers`,
   heading: `${PREFIX}-heading`,
+  headingError: `${PREFIX}-headingError`,
+  headingValid: `${PREFIX}-headingValid`,
   payload: `${PREFIX}-payload`,
   form: `${PREFIX}-form`,
-  buttonRow: `${PREFIX}-buttonRow`
-};
+  buttonRow: `${PREFIX}-buttonRow`,
+}
 
-const Root = styled('div')((
-  {
-    theme
-  }
-) => ({
+const Root = styled("div")(({ theme }) => ({
   [`& .${classes.template}`]: {
     padding: theme.spacing(2),
   },
@@ -94,13 +92,7 @@ const Root = styled('div')((
     fontFamily: "monospace",
   },
 
-  [`& .${classes.heading}`]: ({ error, valid }: StyleProps) => ({
-    backgroundColor: error ? red[300] : valid ? green[300] : "inherit",
-    color: error
-      ? theme.palette.getContrastText(red[300])
-      : valid
-      ? theme.palette.getContrastText(green[300])
-      : "inherit",
+  [`& .${classes.heading}`]: {
     margin: theme.spacing(-2),
     padding: theme.spacing(2),
     display: "flex",
@@ -109,9 +101,19 @@ const Root = styled('div')((
       marginRight: theme.spacing(1),
     },
     marginBottom: theme.spacing(2),
-  }),
+  },
 
-  [`& .${classes.form}`]: {
+  [`& .${classes.heading}.${classes.headingError}`]: {
+    backgroundColor: red[300],
+    color: theme.palette.getContrastText(red[300]),
+  },
+
+  [`& .${classes.heading}.${classes.headingValid}`]: {
+    backgroundColor: green[300],
+    color: theme.palette.getContrastText(green[300]),
+  },
+
+  [`&.${classes.form}, & .${classes.form}`]: {
     maxWidth: "80ch",
   },
 
@@ -124,14 +126,8 @@ const Root = styled('div')((
 
   [`& .${classes.payload}`]: {
     fontSize: theme.typography.caption.fontSize,
-  }
-}));
-
-interface StyleProps {
-  error?: boolean
-  valid?: boolean
-}
-
+  },
+}))
 
 const focusFor = (message: ValidationMessage, useTextBox: boolean) => {
   const { fieldPath } = message
@@ -157,7 +153,6 @@ const focusFor = (message: ValidationMessage, useTextBox: boolean) => {
   }
 }
 
-
 const Template: React.FC<TemplateProps> = ({
   sent,
   heading,
@@ -174,36 +169,44 @@ const Template: React.FC<TemplateProps> = ({
   useTextBox,
   useEuEndpoint,
 }) => {
-
   const { instanceId, api_secret } = useContext(EventCtx)!
   const payload = usePayload()
   return (
     <>
-      <Typography className={classes.heading} variant="h3">
+      <Typography
+        className={clsx(classes.heading, {
+          [classes.headingError]: error,
+          [classes.headingValid]: !error && valid,
+        })}
+        variant="h3"
+      >
         {headingIcon}
         {heading}
       </Typography>
 
       {validationMessages !== undefined &&
-        (
-          (useTextBox && !payloadErrors) ||
-          !useTextBox
-        ) && (
-        <ul>
-          {validationMessages.map((message, idx) => (
-            <div>
-              <li key={idx}>
-                {focusFor(message, useTextBox !== undefined && useTextBox)}
-                {message.description}
+        ((useTextBox && !payloadErrors) || !useTextBox) && (
+          <ul>
+            {validationMessages.map((message, idx) => (
+              <div>
+                <li key={idx}>
+                  {focusFor(message, useTextBox !== undefined && useTextBox)}
+                  {message.description}
+                  <br />
+                  <a
+                    href={message.documentation}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Documentation
+                  </a>
+                </li>
                 <br />
-                <a href={message.documentation} target='_blank' rel="noreferrer">Documentation</a>
-              </li>
-              <br/>
-              <br/>
-            </div>
-          ))}
-        </ul>
-      )}
+                <br />
+              </div>
+            ))}
+          </ul>
+        )}
 
       {useTextBox && payloadErrors && (
         <div>
@@ -212,8 +215,8 @@ const Template: React.FC<TemplateProps> = ({
               JSON formatting error: <i>{payloadErrors}</i>
             </li>
           </ul>
-          <br/>
-          <br/>
+          <br />
+          <br />
         </div>
       )}
 
@@ -221,10 +224,12 @@ const Template: React.FC<TemplateProps> = ({
 
       <section className={classes.buttonRow}>
         {validateEvent !== undefined && (
-          <PAB small onClick={() => {
-            validateEvent()
-          }
-          }>
+          <PAB
+            small
+            onClick={() => {
+              validateEvent()
+            }}
+          >
             validate event
           </PAB>
         )}
@@ -252,9 +257,14 @@ const Template: React.FC<TemplateProps> = ({
         {instanceId.firebase_app_id &&
           `&firebase_app_id=${instanceId.firebase_app_id}`}
         {instanceId.measurement_id &&
-          `&measurement_id=${instanceId.measurement_id}`}{" "} <br />
+          `&measurement_id=${instanceId.measurement_id}`}{" "}
+        <br />
         HTTP/1.1 <br />
-        HOST: {useEuEndpoint ? "region1.google-analytics.com" : "www.google-analytics.com"} <br />
+        HOST:{" "}
+        {useEuEndpoint
+          ? "region1.google-analytics.com"
+          : "www.google-analytics.com"}{" "}
+        <br />
         Content-Type: application/json
       </Typography>
 
@@ -272,7 +282,11 @@ const Template: React.FC<TemplateProps> = ({
   )
 }
 
-const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErrors, useTextBox}) => {
+const ValidateEvent: React.FC<ValidateEventProps> = ({
+  formatPayload,
+  payloadErrors,
+  useTextBox,
+}) => {
   const [useEuEndpoint, setUseEuEndpoint] = React.useState(false)
   const request = useValidateEvent(useEuEndpoint)
 
@@ -300,93 +314,96 @@ const ValidateEvent: React.FC<ValidateEventProps> = ({formatPayload, payloadErro
           </Grid>
         </WithHelpText>
       </Box>
-      <Card className={clsx(classes.form, classes.template)} data-testid="validate and send">
+      <Card
+        className={clsx(classes.form, classes.template)}
+        data-testid="validate and send"
+      >
         <Loadable
           request={request}
-        renderNotStarted={({ validateEvent }) => (
-          <Template
-            useEuEndpoint={useEuEndpoint}
-            heading="This event has not been validated"
-            headingIcon={<Warning />}
-            body={
-              <>
-                <Typography>
-                  Update the event using the controls above.
-                </Typography>
-                <Typography>
-                  When you're done editing the event, click "Validate Event" to
-                  check if the event is valid.
-                </Typography>
-              </>
-            }
-            validateEvent={() => {
-              if (formatPayload) {
-                formatPayload()
+          renderNotStarted={({ validateEvent }) => (
+            <Template
+              useEuEndpoint={useEuEndpoint}
+              heading="This event has not been validated"
+              headingIcon={<Warning />}
+              body={
+                <>
+                  <Typography>
+                    Update the event using the controls above.
+                  </Typography>
+                  <Typography>
+                    When you're done editing the event, click "Validate Event"
+                    to check if the event is valid.
+                  </Typography>
+                </>
               }
+              validateEvent={() => {
+                if (formatPayload) {
+                  formatPayload()
+                }
 
-              validateEvent()
-            }}
-          />
-        )}
-        renderInProgress={() => (
-          <Template
-            useEuEndpoint={useEuEndpoint}
-            heading="Validating"
-            body={<Spinner ellipses />}
-          />
-        )}
-        renderFailed={({ validationMessages, validateEvent }) => (
-          <Template
-            useEuEndpoint={useEuEndpoint}
-            error
-            headingIcon={<ErrorIcon />}
-            heading="Event is invalid"
-            body=""
-            validateEvent={() => {
-              if (formatPayload) {
-                formatPayload()
+                validateEvent()
+              }}
+            />
+          )}
+          renderInProgress={() => (
+            <Template
+              useEuEndpoint={useEuEndpoint}
+              heading="Validating"
+              body={<Spinner ellipses />}
+            />
+          )}
+          renderFailed={({ validationMessages, validateEvent }) => (
+            <Template
+              useEuEndpoint={useEuEndpoint}
+              error
+              headingIcon={<ErrorIcon />}
+              heading="Event is invalid"
+              body=""
+              validateEvent={() => {
+                if (formatPayload) {
+                  formatPayload()
+                }
+
+                validateEvent()
+              }}
+              validationMessages={validationMessages}
+              payloadErrors={payloadErrors}
+              useTextBox={useTextBox}
+            />
+          )}
+          renderSuccessful={({
+            sendToGA,
+            copyPayload,
+            copySharableLink,
+            sent,
+          }) => (
+            <Template
+              useEuEndpoint={useEuEndpoint}
+              sent={sent}
+              valid
+              heading="Event is valid"
+              headingIcon={<Check />}
+              sendToGA={sendToGA}
+              copyPayload={copyPayload}
+              copySharableLink={copySharableLink}
+              body={
+                <>
+                  <Typography>
+                    Use the controls below to copy the event payload or share it
+                    with coworkers.
+                  </Typography>
+                  <Typography>
+                    You can also send the event to Google Analytics and watch it
+                    in action in the Real Time view.
+                  </Typography>
+                </>
               }
-
-              validateEvent()
-            }}
-            validationMessages={validationMessages}
-            payloadErrors={payloadErrors}
-            useTextBox={useTextBox}
-          />
-        )}
-        renderSuccessful={({
-          sendToGA,
-          copyPayload,
-          copySharableLink,
-          sent,
-        }) => (
-          <Template
-            useEuEndpoint={useEuEndpoint}
-            sent={sent}
-            valid
-            heading="Event is valid"
-            headingIcon={<Check />}
-            sendToGA={sendToGA}
-            copyPayload={copyPayload}
-            copySharableLink={copySharableLink}
-            body={
-              <>
-                <Typography>
-                  Use the controls below to copy the event payload or share it
-                  with coworkers.
-                </Typography>
-                <Typography>
-                  You can also send the event to Google Analytics and watch it in
-                  action in the Real Time view.
-                </Typography>
-              </>
-            }
-          />
-        )}
+            />
+          )}
         />
       </Card>
     </Root>
-  );
+  )
 }
 
 export default ValidateEvent

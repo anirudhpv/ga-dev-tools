@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 
 import { Parameter } from "./types"
 import WithHelpText from "@/components/WithHelpText"
@@ -8,18 +8,15 @@ import { DAB, SAB } from "@/components/Buttons"
 import { ShowAdvancedCtx } from "."
 import Parameters from "./Parameters"
 
-const PREFIX = 'Items';
+const PREFIX = "Items"
 
 const classes = {
   items: `${PREFIX}-items`,
-  buttonRow: `${PREFIX}-buttonRow`
-};
+  buttonRow: `${PREFIX}-buttonRow`,
+  grow: `${PREFIX}-grow`,
+}
 
-const Root = styled('section')((
-  {
-    theme
-  }
-) => ({
+const Root = styled("section")(({ theme }) => ({
   [`&.${classes.items}`]: {
     "&> :not(:first-child)": {
       marginTop: theme.spacing(3),
@@ -33,8 +30,11 @@ const Root = styled('section')((
     "&> *:not(:last-child)": {
       marginRight: theme.spacing(1),
     },
-  }
-}));
+  },
+  [`& .${classes.grow}`]: {
+    flexGrow: 1,
+  },
+}))
 
 interface Props {
   items: Parameter[][]
@@ -87,11 +87,11 @@ const Items: React.FC<Props> = ({
           />
         </WithHelpText>
       ))}
-      <div className={classes.buttonRow} >
+      <div className={classes.buttonRow}>
         <SAB add title="add item" small onClick={addItem}>
           item
         </SAB>
-        <div /* className={formClasses.grow} */ />
+        <div className={classes.grow} />
         {showAdvanced && (
           <DAB delete title="remove item parameter" small onClick={removeItems}>
             item
@@ -99,7 +99,7 @@ const Items: React.FC<Props> = ({
         )}
       </div>
     </Root>
-  );
+  )
 }
 
 export default Items

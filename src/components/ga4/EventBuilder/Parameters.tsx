@@ -1,22 +1,19 @@
 import { DAB, SAB } from "@/components/Buttons"
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 import * as React from "react"
 import { ShowAdvancedCtx } from "."
 import Parameter from "./Parameter"
 import { Parameter as ParameterT } from "./types"
 
-const PREFIX = 'Parameters';
+const PREFIX = "Parameters"
 
 const classes = {
   buttonRow: `${PREFIX}-buttonRow`,
-  parameters: `${PREFIX}-parameters`
-};
+  parameters: `${PREFIX}-parameters`,
+  grow: `${PREFIX}-grow`,
+}
 
-const Root = styled('section')((
-  {
-    theme
-  }
-) => ({
+const Root = styled("section")(({ theme }) => ({
   [`&.${classes.parameters}`]: {
     "&> :not(:first-child)": {
       marginTop: theme.spacing(1),
@@ -28,8 +25,11 @@ const Root = styled('section')((
     "&> *:not(:last-child)": {
       marginRight: theme.spacing(1),
     },
-  }
-}));
+  },
+  [`& .${classes.grow}`]: {
+    flexGrow: 1,
+  },
+}))
 
 interface Props {
   parameters: ParameterT[]
@@ -72,7 +72,7 @@ const Parameters: React.FC<Props> = ({
           allowTimestampOverride={allowTimestampOverride}
         />
       ))}
-      <section className={classes.buttonRow} >
+      <section className={classes.buttonRow}>
         {showAdvanced && (
           <>
             <SAB
@@ -105,7 +105,7 @@ const Parameters: React.FC<Props> = ({
         )}
         {removeItem !== undefined && (
           <>
-            <div /* className={formClasses.grow} *//>
+            <div className={classes.grow} />
             <DAB delete small title="remove item" onClick={removeItem}>
               item
             </DAB>
@@ -113,7 +113,7 @@ const Parameters: React.FC<Props> = ({
         )}
       </section>
     </Root>
-  );
+  )
 }
 
 export default Parameters

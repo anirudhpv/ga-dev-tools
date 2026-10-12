@@ -1,8 +1,9 @@
 import * as React from "react"
 
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 
 import { v4 as uuid } from "uuid"
+import clsx from "classnames"
 import TextField from "@mui/material/TextField"
 import Delete from "@mui/icons-material/Delete"
 
@@ -12,7 +13,7 @@ import WithHelpText from "@/components/WithHelpText"
 import InlineCode from "@/components/InlineCode"
 import { SAB, TooltipIconButton } from "@/components/Buttons"
 
-const PREFIX = 'DateRanges';
+const PREFIX = "DateRanges"
 
 const classes = {
   heading: `${PREFIX}-heading`,
@@ -20,14 +21,11 @@ const classes = {
   dateRanges: `${PREFIX}-dateRanges`,
   dateRange: `${PREFIX}-dateRange`,
   name: `${PREFIX}-name`,
-  from: `${PREFIX}-from`
-};
+  from: `${PREFIX}-from`,
+  advanced: `${PREFIX}-advanced`,
+}
 
-const StyledWithHelpText = styled(WithHelpText)((
-  {
-    theme
-  }
-) => ({
+const StyledWithHelpText = styled(WithHelpText)(({ theme }) => ({
   [`& .${classes.heading}`]: {
     margin: theme.spacing(1, 0),
     marginTop: theme.spacing(0),
@@ -48,9 +46,10 @@ const StyledWithHelpText = styled(WithHelpText)((
   },
 
   [`& .${classes.dateRange}`]: {
-    // marginLeft: theme.spacing(2),
-    marginBottom: theme.spacing(1),
     display: "flex",
+  },
+  [`& .${classes.dateRange}.${classes.advanced}`]: {
+    marginBottom: theme.spacing(1),
   },
   [`& .${classes.name}`]: {
     width: "45ch",
@@ -58,8 +57,8 @@ const StyledWithHelpText = styled(WithHelpText)((
 
   [`& .${classes.from}`]: {
     marginRight: theme.spacing(1),
-  }
-}));
+  },
+}))
 
 export interface DateRange {
   name?: string
@@ -173,7 +172,6 @@ const DateRanges: React.FC<{
   className?: string
   showAdvanced: boolean
 }> = ({ dateRanges, setDateRanges, className, showAdvanced }) => {
-
   const {
     addDateRange,
     removeDateRange,
@@ -207,7 +205,12 @@ const DateRanges: React.FC<{
     >
       <section className={classes.dateRanges}>
         {dateRanges?.map(dateRange => (
-          <section key={dateRange.id} className={classes.dateRange}>
+          <section
+            key={dateRange.id}
+            className={clsx(classes.dateRange, {
+              [classes.advanced]: showAdvanced,
+            })}
+          >
             {showAdvanced && (
               <TooltipIconButton
                 tooltip="remove daterange"
@@ -248,7 +251,7 @@ const DateRanges: React.FC<{
         )}
       </section>
     </StyledWithHelpText>
-  );
+  )
 }
 
 export default DateRanges

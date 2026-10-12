@@ -1,6 +1,7 @@
 import * as React from "react"
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 import { useCallback } from "react"
+import clsx from "classnames"
 
 import Typography from "@mui/material/Typography"
 
@@ -14,22 +15,22 @@ import {
 import Expression, { ExpressionType } from "./Expression"
 import useFilter, { UseFilterContext } from "./useFilter"
 
-const PREFIX = 'Filter';
+const PREFIX = "QueryFilter"
 
 const classes = {
   filter: `${PREFIX}-filter`,
-  title: `${PREFIX}-title`
-};
+  title: `${PREFIX}-title`,
+  notched: `${PREFIX}-notched`,
+}
 
-const StyledUseFilterContextProvider = styled(UseFilterContext.Provider)((
-  {
-    theme
-  }
-) => ({
+const Root = styled("section")(({ theme }) => ({
+  [`&.${classes.filter}.${classes.notched}`]: {
+    marginTop: theme.spacing(1),
+  },
   [`& .${classes.title}`]: {
     margin: theme.spacing(1, 0),
-  }
-}));
+  },
+}))
 
 export enum FilterType {
   Metric = "metric",
@@ -45,7 +46,8 @@ interface FilterProps {
 }
 
 export type FilterExpression = gapi.client.analyticsdata.FilterExpression
-export type FilterExpressionList = gapi.client.analyticsdata.FilterExpressionList
+export type FilterExpressionList =
+  gapi.client.analyticsdata.FilterExpressionList
 export type BaseFilter = NonNullable<FilterExpression["filter"]>
 
 export type ExpressionPath = (string | number)[]
@@ -67,14 +69,9 @@ const Filter: React.FC<FilterProps> = ({
   type,
   storageKey,
 }) => {
-
   const useFilterValue = useFilter(storageKey, showAdvanced)
-  const {
-    expression,
-    addExpression,
-    removeExpression,
-    updateFilter,
-  } = useFilterValue
+  const { expression, addExpression, removeExpression, updateFilter } =
+    useFilterValue
 
   const selectedFieldIds = React.useMemo(
     () => new Set((fields || []).map(d => d.apiName)),
@@ -108,8 +105,10 @@ const Filter: React.FC<FilterProps> = ({
   }, [expression])
 
   return (
-    <StyledUseFilterContextProvider value={{ ...useFilterValue }}>
-      <section className={classes.filter}>
+    <UseFilterContext.Provider value={{ ...useFilterValue }}>
+      <Root
+        className={clsx(classes.filter, { [classes.notched]: showAdvanced })}
+      >
         {noFiltersConfigured}
         <Expression
           type={type}
@@ -122,9 +121,9 @@ const Filter: React.FC<FilterProps> = ({
           expression={expression || {}}
           nesting={-1}
         />
-      </section>
-    </StyledUseFilterContextProvider>
-  );
+      </Root>
+    </UseFilterContext.Provider>
+  )
 }
 
 export default Filter

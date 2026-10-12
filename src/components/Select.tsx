@@ -31,12 +31,11 @@ const Select: React.FC<SelectProps> = ({
   helperText,
   fullWidth = false,
 }) => {
-
-
   return (
     <Autocomplete<SelectOption, false, true, false>
       disableClearable
       className={className}
+      sx={{ minWidth: "15ch" }}
       autoHighlight
       autoSelect
       options={options}
@@ -51,11 +50,7 @@ const Select: React.FC<SelectProps> = ({
           setValue(value === null ? undefined : (value as SelectOption))
         }
       }}
-      renderOption={(props, option) => (
-          <li {...props}>
-            {option.displayName}
-          </li>
-      )}
+      renderOption={(props, option) => <li {...props}>{option.displayName}</li>}
       renderInput={params => (
         <TextField
           {...params}

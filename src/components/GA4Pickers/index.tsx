@@ -14,28 +14,26 @@
 
 import * as React from "react"
 
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles"
 
 import { Typography, TextField } from "@mui/material"
-import Autocomplete, {
-  createFilterOptions,
-} from "@mui/material/Autocomplete"
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete"
 import { useState } from "react"
 import { Dispatch, RequestStatus } from "@/types"
 import useAvailableColumns from "./useAvailableColumns"
 import { DimensionsAndMetricsRequestCtx } from "../ga4/DimensionsMetricsExplorer/useDimensionsAndMetrics"
 
-const PREFIX = 'DimensionsPicker';
+const PREFIX = "DimensionsPicker"
 
 const classes = {
   option: `${PREFIX}-option`,
-  left: `${PREFIX}-left`
-};
+  left: `${PREFIX}-left`,
+}
 
-const StyledTextField
- = styled(TextField
-)(() => ({
-  [`& .${classes.option}`]: {
+// Styled on the option element itself, since options render inside the
+// Autocomplete popper (outside of the TextField).
+const ColumnRoot = styled("div")({
+  [`&.${classes.option}`]: {
     display: "flex",
     width: "100%",
   },
@@ -44,8 +42,8 @@ const StyledTextField
     flexGrow: 1,
     display: "flex",
     flexDirection: "column",
-  }
-}));
+  },
+})
 
 export type GA4Dimension = gapi.client.analyticsdata.DimensionMetadata
 export type GA4Dimensions = GA4Dimension[] | undefined
@@ -55,7 +53,7 @@ type GA4Column = GA4Dimension | GA4Metric
 
 const Column: React.FC<{ column: GA4Column }> = ({ column }) => {
   return (
-    <div className={classes.option}>
+    <ColumnRoot className={classes.option}>
       <div className={classes.left}>
         <Typography variant="body1" component="div">
           {column.uiName}
@@ -65,7 +63,7 @@ const Column: React.FC<{ column: GA4Column }> = ({ column }) => {
         </Typography>
       </div>
       <Typography variant="subtitle1" color="textSecondary"></Typography>
-    </div>
+    </ColumnRoot>
   )
 }
 
@@ -106,7 +104,9 @@ export const DimensionsPicker: React.FC<{
       multiple
       loading={request.status === RequestStatus.InProgress}
       options={dimensionOptionsLessSelected || []}
-      getOptionLabel={ (dimension) => typeof dimension === "string" ? dimension : dimension.apiName!}
+      getOptionLabel={dimension =>
+        typeof dimension === "string" ? dimension : dimension.apiName!
+      }
       value={dimensions || []}
       onChange={(_event, value) => {
         if (setDimensions !== undefined) {
@@ -121,12 +121,12 @@ export const DimensionsPicker: React.FC<{
         }
       }}
       renderOption={(props, column) => (
-          <li {...props}>
-            <Column column={column} />
-          </li>
+        <li {...props}>
+          <Column column={column} />
+        </li>
       )}
       renderInput={params => (
-        <StyledTextField
+        <TextField
           {...params}
           required={required}
           label={label}
@@ -178,7 +178,9 @@ export const MetricsPicker: React.FC<{
       multiple
       loading={request.status === RequestStatus.InProgress}
       options={metricOptionsLessSelected || []}
-      getOptionLabel={ (metric) => typeof metric === "string" ? metric : metric.apiName!}
+      getOptionLabel={metric =>
+        typeof metric === "string" ? metric : metric.apiName!
+      }
       value={metrics || []}
       onChange={(_event, value) => {
         if (setMetrics !== undefined) {
@@ -193,12 +195,12 @@ export const MetricsPicker: React.FC<{
         }
       }}
       renderOption={(props, column) => (
-          <li {...props}>
-            <Column column={column} />
-          </li>
+        <li {...props}>
+          <Column column={column} />
+        </li>
       )}
       renderInput={params => (
-        <StyledTextField
+        <TextField
           {...params}
           required={required}
           label={label}
@@ -230,15 +232,13 @@ export const DimensionPicker: React.FC<{
 }) => {
   const [selected, setSelected] = useState<GA4Dimension>()
   const request = React.useContext(DimensionsAndMetricsRequestCtx)
-  const {
-    dimensionOptions,
-    dimensionOptionsLessSelected,
-  } = useAvailableColumns({
-    selectedDimensions: selected === undefined ? [] : [selected],
-    selectedMetrics: [],
-    request,
-    dimensionFilter,
-  })
+  const { dimensionOptions, dimensionOptionsLessSelected } =
+    useAvailableColumns({
+      selectedDimensions: selected === undefined ? [] : [selected],
+      selectedMetrics: [],
+      request,
+      dimensionFilter,
+    })
 
   React.useEffect(() => {
     if (setDimension !== undefined) {
@@ -281,7 +281,9 @@ export const DimensionPicker: React.FC<{
       freeSolo
       loading={request.status === RequestStatus.InProgress}
       options={dimensionOptionsLessSelected || []}
-      getOptionLabel={ (dimension) => typeof dimension === "string" ? dimension : dimension.apiName!}
+      getOptionLabel={dimension =>
+        typeof dimension === "string" ? dimension : dimension.apiName!
+      }
       value={selected === undefined ? null : selected}
       onChange={(_event, value) =>
         setSelected(value === null ? undefined : (value as GA4Dimension))
@@ -292,7 +294,7 @@ export const DimensionPicker: React.FC<{
         </li>
       )}
       renderInput={params => (
-        <StyledTextField
+        <TextField
           {...params}
           required={required}
           label={label}
@@ -372,7 +374,9 @@ export const MetricPicker: React.FC<{
       freeSolo
       loading={request.status === RequestStatus.InProgress}
       options={metricOptionsLessSelected || []}
-      getOptionLabel={ (metric) => typeof metric === "string" ? metric : metric.apiName!}
+      getOptionLabel={metric =>
+        typeof metric === "string" ? metric : metric.apiName!
+      }
       value={selected === undefined ? null : selected}
       onChange={(_event, value) =>
         setSelected(value === null ? undefined : (value as GA4Metric))
@@ -383,7 +387,7 @@ export const MetricPicker: React.FC<{
         </li>
       )}
       renderInput={params => (
-        <StyledTextField
+        <TextField
           {...params}
           required={required}
           label={label}
